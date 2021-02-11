@@ -23,7 +23,7 @@ RUN curl -sL https://deb.nodesource.com/setup_14.x | bash - \
         pdo_mysql
 
 # change composer folder
-RUN echo "export COMPOSER_HOME=$PWD/.composer" >> /etc/bash.bashrc
+RUN echo "export COMPOSER_HOME=/var/www/html/.composer" | cat - /etc/bash.bashrc | cat - > /etc/bash.bashrc
 # change npm folder
 RUN npm config set cache /var/www/html/.npm --global
 # disable npm update check
