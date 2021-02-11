@@ -13,7 +13,7 @@ SH_WWW= ${DOCKER_COMPOSE} exec -u 33:33 app bash
 up:
 	@${DOCKER_COMPOSE} up -d --build
 	@${SH_ROOT} -c "chown www-data:www-data /var/www/html"
-	@test -z ${APP_KEY} && ${SH_WWW} -c "composer install" 		   || exit 0
+	@test -z ${APP_KEY} && ${SH_WWW} -c "composer install"         || exit 0
 	@test -z ${APP_KEY} && ${SH_WWW} -c "npm install"              || exit 0
 	@test -z ${APP_KEY} && ${SH_WWW} -c "php artisan key:generate" || exit 0
 
