@@ -9,7 +9,7 @@ services:
         PHP_VERSION: ${PHP_VERSION}
         COMPOSER_VERSION: ${COMPOSER_VERSION}
     volumes:
-      - .:/var/www/html
+      - laravel-demo-code:/var/www/html
     networks:
       - reverse-proxy
       - db
@@ -24,7 +24,7 @@ services:
     networks:
       - db
     volumes:
-      - ./storage/app/db:/var/lib/mysql
+      - laravel-demo-db:/var/lib/mysql
     environment:
       MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
       MYSQL_DATABASE: ${DB_DATABASE}
@@ -35,3 +35,44 @@ networks:
   reverse-proxy:
     external: true
   db:
+
+volumes:
+  laravel-demo-code:
+  laravel-demo-db:
+
+x-mutagen:
+  sync:
+    defaults:
+      ignore:
+        vcs: true
+    laravel-demo-code:
+      alpha: .
+      beta: volume://laravel-demo-code
+      permissions:
+        defaultFileMode: 666
+        defaultDirectoryMode: 777
+      ignore:
+        paths:
+          - "/storage/app/db"
+          - "/vendor"
+          - "/node_modules"
+          - "/.composer"
+          - "/.npm"
+      configurationBeta:
+        permissions:
+          defaultOwner: "id:33" # www-data
+          defaultGroup: "id:33" # www-data
+    laravel-demo-db:
+      alpha: ./storage/app/db
+      beta: volume://laravel-demo-db
+      permissions:
+        defaultFileMode: 666
+        defaultDirectoryMode: 777
+      ignore:
+        paths:
+          - "/*"
+          - "!/storage/app/db"
+      configurationBeta:
+        permissions:
+          defaultOwner: "id:33" # www-data
+          defaultGroup: "id:33" # www-data

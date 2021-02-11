@@ -4,22 +4,31 @@ all: up
 $(shell test -f .env || cp .env.example .env)
 include .env
 
-SH=docker-compose exec app bash
+DOCKER_COMPOSE=mutagen compose
+
+SH_ROOT=${DOCKER_COMPOSE} exec -u 0:0   app bash
+SH_WWW= ${DOCKER_COMPOSE} exec -u 33:33 app bash
 
 .PHONY: up
 up:
-	docker-compose up -d --build
-	@test -d vendor || ${SH} -c "composer install"
-	@test -z ${APP_KEY} && ${SH} -c "php artisan key:generate" || exit 0
+	@${DOCKER_COMPOSE} up -d --build
+	@${SH_ROOT} -c "chown www-data:www-data /var/www/html"
+	@test -z ${APP_KEY} && ${SH_WWW} -c "composer install" 		   || exit 0
+	@test -z ${APP_KEY} && ${SH_WWW} -c "npm install"              || exit 0
+	@test -z ${APP_KEY} && ${SH_WWW} -c "php artisan key:generate" || exit 0
 
 .PHONY: restart
 restart:
-	docker-compose restart
+	@${DOCKER_COMPOSE} restart
 
 .PHONY: down
 down:
-	docker-compose down
+	@${DOCKER_COMPOSE} down
 
 .PHONY: sh
 sh: up
-	${SH}
+	@${SH_WWW}
+
+.PHONY: sh-root
+sh-root: up
+	@${SH_ROOT}
