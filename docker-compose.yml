@@ -1,0 +1,37 @@
+version: '2'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        PHP_VERSION: ${PHP_VERSION}
+        COMPOSER_VERSION: ${COMPOSER_VERSION}
+    volumes:
+      - .:/var/www/html
+    networks:
+      - reverse-proxy
+      - db
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.${TRAEFIK_APP_NAME}.entrypoints=https"
+      - "traefik.http.routers.${TRAEFIK_APP_NAME}.tls=true"
+      - "traefik.http.routers.${TRAEFIK_APP_NAME}.rule=Host(`${TRAEFIK_HOST}`)"
+
+  db:
+    image: mariadb
+    networks:
+      - db
+    volumes:
+      - ./storage/app/db:/var/lib/mysql
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+
+networks:
+  reverse-proxy:
+    external: true
+  db:
