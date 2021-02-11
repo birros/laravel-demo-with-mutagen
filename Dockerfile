@@ -7,12 +7,19 @@ FROM php:${PHP_VERSION}-apache
 
 COPY --from=composer /usr/bin/composer /usr/bin/composer
 
-RUN apt-get update && apt-get install -y \
+RUN curl -sL https://deb.nodesource.com/setup_14.x | bash - \
+    && apt-get install -y \
         zip \
         libzip-dev \
+        nodejs \
     && apt-get clean -y \
-    && docker-php-ext-configure zip \
-    && docker-php-ext-install -j$(nproc) zip mysqli pdo pdo_mysql
+    && docker-php-ext-configure \
+        zip \
+    && docker-php-ext-install -j$(nproc) \
+        zip \
+        mysqli \
+        pdo \
+        pdo_mysql
 
 ENV APACHE_DOCUMENT_ROOT /var/www/html/public
 
