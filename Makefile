@@ -6,10 +6,16 @@ include .env
 
 SH_ROOT=docker-compose exec -u 0:0   app bash
 SH_WWW= docker-compose exec -u 33:33 app bash
+GITCONFIG_PATH=${HOME}/$(shell readlink ${HOME}/.gitconfig || echo ${HOME}/.gitconfig)
+
+.PHONY: docker-build
+docker-build:
+	docker-compose build
 
 .PHONY: docker-up
-docker-up:
-	docker-compose up -d --build
+docker-up: docker-build
+	docker-compose up -d
+	@docker cp ${GITCONFIG_PATH} $$(docker-compose ps -q app):/var/www/.gitconfig
 
 .PHONY: mutagen-up
 mutagen-up: docker-up

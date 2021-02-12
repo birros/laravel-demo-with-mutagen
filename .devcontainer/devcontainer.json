@@ -1,0 +1,16 @@
+{
+    "dockerComposeFile": ["../docker-compose.yml"],
+    "service": "app",
+    "workspaceFolder": "/var/www/html",
+    "remoteUser": "www-data",
+    "settings": {
+        "terminal.integrated.shell.linux": "/bin/bash"
+    },
+    "initializeCommand": "make",
+    "shutdownAction": "none",
+    "extensions": [
+        "bmewburn.vscode-intelephense-client",
+        "kokororin.vscode-phpfmt",
+        "esbenp.prettier-vscode"
+    ]
+}

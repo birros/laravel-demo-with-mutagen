@@ -1,7 +1,5 @@
 sync:
   defaults:
-    ignore:
-      vcs: true
   laravel-demo-code:
     alpha: .
     beta: "docker://${PROJECT_NAME}-mutagen/var/www/html"
