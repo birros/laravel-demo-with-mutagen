@@ -9,8 +9,9 @@
     "initializeCommand": "make",
     "shutdownAction": "none",
     "extensions": [
-        "bmewburn.vscode-intelephense-client",
-        "kokororin.vscode-phpfmt",
-        "esbenp.prettier-vscode"
-    ]
+		"bmewburn.vscode-intelephense-client",
+		"kokororin.vscode-phpfmt",
+		"esbenp.prettier-vscode",
+		"ms-azuretools.vscode-docker"
+	]
 }

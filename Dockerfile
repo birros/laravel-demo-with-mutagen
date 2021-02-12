@@ -41,11 +41,8 @@ RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' \
 # preinstall vscode-server
 ENV VSCODE_SERVER_COMMIT=622cb03f7e070a9670c94bae1a45d78d7181fbd4
 RUN mkdir -p /var/www/.vscode-server \
-    && chown www-data:www-data /var/www/.vscode-server \
     && touch /var/www/.gitconfig \
-    && chown www-data:www-data /var/www/.gitconfig \
     && mkdir /var/www/.ssh \
-    && chown www-data:www-data /var/www/.ssh \
     && mkdir -p /var/www/.vscode-server/bin/${VSCODE_SERVER_COMMIT} \
     && curl -sSL "https://update.code.visualstudio.com/commit:${VSCODE_SERVER_COMMIT}/server-linux-x64/stable" \
         | tar zxvf - -C /var/www/.vscode-server/bin/${VSCODE_SERVER_COMMIT} --strip 1
@@ -53,7 +50,8 @@ RUN mkdir -p /var/www/.vscode-server \
 # preinstall vscode extensions
 ENV INTELEPHENSE_VERSION=1.6.3 \
     PHPFMT_VERSION=1.0.30 \
-    PRETTIER_VERSION=5.9.2
+    PRETTIER_VERSION=5.9.2 \
+    DOCKER_VERSION=1.9.1
 RUN mkdir -p /var/www/.vscode-server/extensions \
     && cd /var/www/.vscode-server/extensions \
         # intelephense
@@ -71,4 +69,11 @@ RUN mkdir -p /var/www/.vscode-server/extensions \
             | bsdtar -xvf - extension \
         && mv /var/www/.vscode-server/extensions/extension \
             /var/www/.vscode-server/extensions/esbenp.prettier-vscode-${PRETTIER_VERSION} \
-    && chown -R www-data:www-data /var/www/.vscode-server
+        # docker
+        && curl -sSL https://marketplace.visualstudio.com/_apis/public/gallery/publishers/ms-azuretools/vsextensions/vscode-docker/${DOCKER_VERSION}/vspackage \
+            | bsdtar -xvf - extension \
+        && mv /var/www/.vscode-server/extensions/extension \
+            /var/www/.vscode-server/extensions/ms-azuretools.vscode-docker-${DOCKER_VERSION}
+
+# change /var/www ownership
+RUN chown -R www-data:www-data /var/www
