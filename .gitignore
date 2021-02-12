@@ -16,3 +16,5 @@ mutagen.yml.lock
 mix-manifest.json
 public/css
 public/js
+.composer
+.npm
