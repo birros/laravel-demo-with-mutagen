@@ -10,9 +10,8 @@ and write access performance on **macOS** when working on a php project.
 
 2. Install mutagen
     ```shell
-    $ brew install mutagen-io/mutagen/mutagen-beta
+    $ brew install mutagen-io/mutagen/mutagen
     ```
-    _Tested with v0.12.0-beta2 which integrates a docker-compose replacement_
 
 ## Setup
 

@@ -15,9 +15,9 @@ services:
       - db
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.${TRAEFIK_APP_NAME}.entrypoints=https"
-      - "traefik.http.routers.${TRAEFIK_APP_NAME}.tls=true"
-      - "traefik.http.routers.${TRAEFIK_APP_NAME}.rule=Host(`${TRAEFIK_HOST}`)"
+      - "traefik.http.routers.${PROJECT_NAME}.entrypoints=https"
+      - "traefik.http.routers.${PROJECT_NAME}.tls=true"
+      - "traefik.http.routers.${PROJECT_NAME}.rule=Host(`${PROJECT_HOST}`)"
 
   db:
     image: mariadb
@@ -29,6 +29,13 @@ services:
       MYSQL_USER: ${DB_USERNAME}
       MYSQL_PASSWORD: ${DB_PASSWORD}
 
+  mutagen:
+    image: alpine:latest
+    container_name: ${PROJECT_NAME}-mutagen
+    volumes:
+      - laravel-demo-code:/var/www/html
+    command: tail -f /dev/null
+
 networks:
   reverse-proxy:
     external: true
@@ -36,25 +43,3 @@ networks:
 
 volumes:
   laravel-demo-code:
-
-x-mutagen:
-  sync:
-    defaults:
-      ignore:
-        vcs: true
-    laravel-demo-code:
-      alpha: .
-      beta: volume://laravel-demo-code
-      permissions:
-        defaultFileMode: 666
-        defaultDirectoryMode: 777
-      ignore:
-        paths:
-          - "/vendor"
-          - "/node_modules"
-          - "/.composer"
-          - "/.npm"
-      configurationBeta:
-        permissions:
-          defaultOwner: "id:33" # www-data
-          defaultGroup: "id:33" # www-data
