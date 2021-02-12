@@ -23,8 +23,6 @@ services:
     image: mariadb
     networks:
       - db
-    volumes:
-      - laravel-demo-db:/var/lib/mysql
     environment:
       MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
       MYSQL_DATABASE: ${DB_DATABASE}
@@ -38,7 +36,6 @@ networks:
 
 volumes:
   laravel-demo-code:
-  laravel-demo-db:
 
 x-mutagen:
   sync:
@@ -53,25 +50,10 @@ x-mutagen:
         defaultDirectoryMode: 777
       ignore:
         paths:
-          - "/storage/app/db"
           - "/vendor"
           - "/node_modules"
           - "/.composer"
           - "/.npm"
-      configurationBeta:
-        permissions:
-          defaultOwner: "id:33" # www-data
-          defaultGroup: "id:33" # www-data
-    laravel-demo-db:
-      alpha: ./storage/app/db
-      beta: volume://laravel-demo-db
-      permissions:
-        defaultFileMode: 666
-        defaultDirectoryMode: 777
-      ignore:
-        paths:
-          - "/*"
-          - "!/storage/app/db"
       configurationBeta:
         permissions:
           defaultOwner: "id:33" # www-data
