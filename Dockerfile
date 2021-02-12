@@ -1,5 +1,5 @@
-ARG PHP_VERSION=8.0.2
-ARG COMPOSER_VERSION=2.0.9
+ARG PHP_VERSION=latest
+ARG COMPOSER_VERSION=latest
 
 # ARG connot be used in COPY
 FROM composer:${COMPOSER_VERSION} as composer
