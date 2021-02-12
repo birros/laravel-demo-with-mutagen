@@ -4,13 +4,12 @@ all: up
 $(shell test -f .env || cp .env.example .env)
 include .env
 
-SH_ROOTdocker-compose exec -u 0:0   app bash
+SH_ROOT=docker-compose exec -u 0:0   app bash
 SH_WWW= docker-compose exec -u 33:33 app bash
 
 .PHONY: docker-up
 docker-up:
 	docker-compose up -d --build
-	@${SH_ROOT} -c "chown www-data:www-data /var/www/html"
 
 .PHONY: mutagen-up
 mutagen-up: docker-up
