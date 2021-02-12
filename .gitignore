@@ -13,3 +13,6 @@ npm-debug.log
 yarn-error.log
 mutagen.yml
 mutagen.yml.lock
+mix-manifest.json
+public/css
+public/js

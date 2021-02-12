@@ -14,7 +14,7 @@ docker-up:
 
 .PHONY: mutagen-up
 mutagen-up: docker-up
-	sed -e "s/\$${PROJECT_NAME}/${PROJECT_NAME}/g" mutagen.template.yml > mutagen.yml
+	@sed -e "s/\$${PROJECT_NAME}/${PROJECT_NAME}/g" mutagen.template.yml > mutagen.yml
 	mutagen project start || exit 0
 
 .PHONY: up
