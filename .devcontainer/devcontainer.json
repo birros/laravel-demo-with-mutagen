@@ -7,11 +7,11 @@
         "terminal.integrated.shell.linux": "/bin/bash"
     },
     "initializeCommand": "make",
-    "shutdownAction": "none",
+    "shutdownAction": "stopCompose",
     "extensions": [
-		"bmewburn.vscode-intelephense-client",
-		"kokororin.vscode-phpfmt",
-		"esbenp.prettier-vscode",
-		"ms-azuretools.vscode-docker"
-	]
+        "bmewburn.vscode-intelephense-client",
+        "kokororin.vscode-phpfmt",
+        "esbenp.prettier-vscode",
+        "ms-azuretools.vscode-docker"
+    ]
 }

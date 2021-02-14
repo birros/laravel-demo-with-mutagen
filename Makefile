@@ -36,6 +36,13 @@ restart:
 mutagen-down:
 	mutagen project terminate || exit 0
 
+.PHONY: docker-stop
+docker-stop: mutagen-down
+	docker-compose stop
+
+.PHONY: stop
+stop: docker-stop
+
 .PHONY: docker-down
 docker-down: mutagen-down
 	docker-compose down
