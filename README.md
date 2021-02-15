@@ -1,7 +1,19 @@
 # Laravel demo with mutagen
 
-This repo aims to show how to use [docker][1] with [mutagen][2] to improve read
-and write access performance on **macOS** when working on a php project.
+This repo aims to show how to use [docker][1] with [mutagen][2] when working on
+a php project.
+
+**Pros**:
+
+1. Improve read and write access performance on **macOS**
+2. Better management of file permissions in the target container
+
+**Cons**:
+
+1. The `vendor` and `node_modules` folders are no longer present on the host
+   side which prevents the IDE from providing its usual facilities for writing
+   code. In response we can use [vscode][4] and its [remote development][5]
+   feature to develop directly inside the container
 
 ## Install dependencies (macOS)
 
@@ -28,3 +40,5 @@ Laravel available here: https://laravel-demo.dev.localhost
 [1]: https://github.com/docker/docker-ce
 [2]: https://github.com/mutagen-io/mutagen
 [3]: https://github.com/birros/docker-traefik-mkcert
+[4]: https://github.com/microsoft/vscode
+[5]: https://code.visualstudio.com/docs/remote/remote-overview
