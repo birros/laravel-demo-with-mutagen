@@ -25,6 +25,11 @@ a php project.
     $ brew install mutagen-io/mutagen/mutagen
     ```
 
+## Optionnal dependency
+
+To force vscode to run `make stop` when stopping `docker-compose` stack we use
+this wrapper: [vscode-deinitialize-command][6]
+
 ## Setup
 
 ```shell
@@ -42,3 +47,4 @@ Laravel available here: https://laravel-demo.dev.localhost
 [3]: https://github.com/birros/docker-traefik-mkcert
 [4]: https://github.com/microsoft/vscode
 [5]: https://code.visualstudio.com/docs/remote/remote-overview
+[6]: https://github.com/birros/vscode-deinitialize-command
