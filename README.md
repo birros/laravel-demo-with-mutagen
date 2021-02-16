@@ -40,6 +40,11 @@ $ mutagen daemon stop
 
 Laravel available here: https://laravel-demo.dev.localhost
 
+## Remark
+
+All the docker's conf are in the [devdock](./devdock) folder and can be
+outsourced.
+
 <!-- Links -->
 
 [1]: https://github.com/docker/docker-ce
