@@ -9,7 +9,7 @@ services:
         PHP_VERSION: ${PHP_VERSION:-8.0.2}
         COMPOSER_VERSION: ${COMPOSER_VERSION:-2.0.9}
     volumes:
-      - laravel-demo-code:/var/www/html
+      - ${PROJECT_NAME}-code:/var/www/html
     networks:
       - reverse-proxy
       - db
@@ -21,6 +21,8 @@ services:
 
   db:
     image: mariadb:${MARIADB_VERSION:-10.5.8}
+    volumes:
+      - ${PROJECT_NAME}-db:/var/lib/mysql
     networks:
       - db
     environment:
@@ -33,7 +35,7 @@ services:
     image: alpine:${ALPINE_VERSION:-3.13.1}
     container_name: ${PROJECT_NAME}-mutagen
     volumes:
-      - laravel-demo-code:/var/www/html
+      - ${PROJECT_NAME}-code:/var/www/html
     command: tail -f /dev/null
 
 networks:
@@ -42,4 +44,5 @@ networks:
   db:
 
 volumes:
-  laravel-demo-code:
+  ${PROJECT_NAME}-code:
+  ${PROJECT_NAME}-db:
