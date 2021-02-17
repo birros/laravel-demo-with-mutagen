@@ -13,12 +13,10 @@ SH_WWW= docker-compose exec -u 33:33 app bash
 IF_EMPTY_APP_KEY=source .env; test -z \$${APP_KEY}
 IF_NO_DOT_ENV=! test -f .env
 COPY_GITCONFIG=docker cp ${GITCONFIG_PATH} $$(docker-compose ps -q app):/var/www/.gitconfig
-GENERATE_DOCKER_COMPOSE=set -a; source $$PWD/.env; envsubst < docker-compose.template.yml > docker-compose.yml
 GENERATE_MUTAGEN=set -a; source $$PWD/.env; envsubst < mutagen.template.yml > mutagen.yml
 
 .PHONY: docker-build
 docker-build:
-	@${GENERATE_DOCKER_COMPOSE}
 	docker-compose build
 
 .PHONY: docker-up
