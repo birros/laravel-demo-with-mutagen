@@ -4,7 +4,7 @@ ARG COMPOSER_VERSION=latest
 # ARG connot be used in COPY
 FROM composer:${COMPOSER_VERSION} as composer
 
-FROM php:${PHP_VERSION}-apache
+FROM php:${PHP_VERSION}-fpm
 
 COPY --from=composer /usr/bin/composer /usr/bin/composer
 
@@ -20,8 +20,7 @@ RUN apt-get update && apt-get install -y \
         zip \
         mysqli \
         pdo \
-        pdo_mysql \
-    && a2enmod rewrite
+        pdo_mysql
 
 # disable npm update check
 ENV NO_UPDATE_NOTIFIER true
@@ -42,13 +41,6 @@ RUN mkdir -p ${NVM_DIR} \
 
 # add node to path
 ENV PATH ${NVM_DIR}/versions/node/current/bin:$PATH
-
-# change APACHE_DOCUMENT_ROOT
-ENV APACHE_DOCUMENT_ROOT /var/www/html/public
-RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' \
-        /etc/apache2/sites-available/*.conf \
-    && sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' \
-        /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
 
 # preinstall vscode-server
 ENV VSCODE_SERVER_COMMIT=622cb03f7e070a9670c94bae1a45d78d7181fbd4
