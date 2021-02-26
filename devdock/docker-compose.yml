@@ -8,6 +8,7 @@ services:
       args:
         PHP_VERSION: ${PHP_VERSION:-8.0.2}
         COMPOSER_VERSION: ${COMPOSER_VERSION:-2.0.9}
+        NODE_VERSION: ${NODE_VERSION:-14.16.0}
     volumes:
       - code:/var/www/html
       - composer:/var/www/.composer
