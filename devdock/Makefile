@@ -14,6 +14,9 @@ IF_EMPTY_APP_KEY=source .env; test -z \$${APP_KEY}
 IF_NO_DOT_ENV=! test -f .env
 COPY_GITCONFIG=docker cp ${GITCONFIG_PATH} $$(docker-compose ps -q app):/var/www/.gitconfig
 GENERATE_MUTAGEN=set -a; source $$PWD/.env; envsubst < mutagen.template.yml > mutagen.yml
+ASK_CONFIRM=printf "Are you sure? [y/N] " && read ans && [ $${ans:-N} == y ]
+DOCKER_VOLUME_RM=VOLUMES=$$(docker run --rm -v $$PWD/docker-compose.yml:/docker-compose.yml:ro --entrypoint yq linuxserver/yq -r '.volumes | keys | join(" ")' /docker-compose.yml) \
+	&& for v in $$VOLUMES; do docker volume rm ${COMPOSE_PROJECT_NAME}_$$v; done
 
 .PHONY: docker-build
 docker-build:
@@ -56,6 +59,10 @@ stop: docker-stop
 .PHONY: docker-down
 docker-down: mutagen-down
 	docker-compose down
+
+.PHONY: docker-volume-rm
+docker-volume-rm:
+	@${ASK_CONFIRM} && ${DOCKER_VOLUME_RM}
 
 .PHONY: down
 down: docker-down
