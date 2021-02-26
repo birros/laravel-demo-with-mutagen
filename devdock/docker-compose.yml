@@ -52,6 +52,21 @@ services:
       MYSQL_USER: ${DB_USERNAME}
       MYSQL_PASSWORD: ${DB_PASSWORD}
 
+  adminer:
+    build:
+      context: ./adminer
+      dockerfile: Dockerfile
+    networks:
+      - reverse-proxy
+      - db
+    environment:
+      ADMINER_DEFAULT_SERVER: db
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}_db.entrypoints=https"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}_db.tls=true"
+      - "traefik.http.routers.${COMPOSE_PROJECT_NAME}_db.rule=Host(`${ADMINER_HOST}`)"
+
   mutagen:
     image: alpine:${ALPINE_VERSION:-3.13.1}
     container_name: ${COMPOSE_PROJECT_NAME}_mutagen
