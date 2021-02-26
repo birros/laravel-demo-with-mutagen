@@ -22,6 +22,8 @@ docker-build:
 .PHONY: docker-up
 docker-up: docker-build
 	docker-compose up -d
+	@${SH_ROOT} -c "chown -R www-data:www-data /var/www/.composer"
+	@${SH_ROOT} -c "chown -R www-data:www-data /var/www/.npm"
 	@${COPY_GITCONFIG}
 
 .PHONY: mutagen-up
@@ -32,7 +34,7 @@ mutagen-up: docker-up
 .PHONY: up
 up: mutagen-up
 	@${SH_WWW} -c "${IF_NO_DOT_ENV}    && sed -e 's/DB_HOST=.*/DB_HOST=db/g' .env.example > .env" || exit 0
-	@${SH_WWW} -c "${IF_EMPTY_APP_KEY} && source /etc/bash.bashrc && composer install"            || exit 0
+	@${SH_WWW} -c "${IF_EMPTY_APP_KEY} && composer install"                                       || exit 0
 	@${SH_WWW} -c "${IF_EMPTY_APP_KEY} && npm install && npm run dev"                             || exit 0
 	@${SH_WWW} -c "${IF_EMPTY_APP_KEY} && php artisan key:generate"                               || exit 0
 

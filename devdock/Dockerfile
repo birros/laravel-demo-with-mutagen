@@ -14,6 +14,7 @@ RUN curl -sL https://deb.nodesource.com/setup_14.x | bash - \
         libzip-dev \
         nodejs \
         git \
+        wget \
         bsdtar \
     && apt-get clean -y \
     && docker-php-ext-configure \
@@ -25,11 +26,8 @@ RUN curl -sL https://deb.nodesource.com/setup_14.x | bash - \
         pdo_mysql \
     && a2enmod rewrite
 
-# disable npm update check & change npm & composer folders
+# disable npm update check
 ENV NO_UPDATE_NOTIFIER true
-RUN npm config set cache /var/www/html/.npm --global \
-    && echo "export COMPOSER_HOME=/var/www/html/.composer" \
-        | cat - /etc/bash.bashrc | cat - > /etc/bash.bashrc
 
 # change APACHE_DOCUMENT_ROOT
 ENV APACHE_DOCUMENT_ROOT /var/www/html/public
@@ -49,31 +47,27 @@ RUN mkdir -p /var/www/.vscode-server \
 
 # preinstall vscode extensions
 ENV INTELEPHENSE_VERSION=1.6.3 \
-    PHPFMT_VERSION=1.0.30 \
     PRETTIER_VERSION=5.9.2 \
     DOCKER_VERSION=1.9.1
-RUN mkdir -p /var/www/.vscode-server/extensions \
-    && cd /var/www/.vscode-server/extensions \
-        # intelephense
-        && curl -sSL https://marketplace.visualstudio.com/_apis/public/gallery/publishers/bmewburn/vsextensions/vscode-intelephense-client/${INTELEPHENSE_VERSION}/vspackage \
-            | bsdtar -xvf - extension \
-        && mv /var/www/.vscode-server/extensions/extension \
-            /var/www/.vscode-server/extensions/bmewburn.vscode-intelephense-client-${INTELEPHENSE_VERSION} \
-        # phpfmt
-        && curl -sSL https://marketplace.visualstudio.com/_apis/public/gallery/publishers/kokororin/vsextensions/vscode-phpfmt/${PHPFMT_VERSION}/vspackage \
-            | bsdtar -xvf - extension \
-        && mv /var/www/.vscode-server/extensions/extension \
-            /var/www/.vscode-server/extensions/kokororin.vscode-phpfmt-${PHPFMT_VERSION} \
-        # prettier
-        && curl -sSL https://marketplace.visualstudio.com/_apis/public/gallery/publishers/esbenp/vsextensions/prettier-vscode/${PRETTIER_VERSION}/vspackage \
-            | bsdtar -xvf - extension \
-        && mv /var/www/.vscode-server/extensions/extension \
-            /var/www/.vscode-server/extensions/esbenp.prettier-vscode-${PRETTIER_VERSION} \
-        # docker
-        && curl -sSL https://marketplace.visualstudio.com/_apis/public/gallery/publishers/ms-azuretools/vsextensions/vscode-docker/${DOCKER_VERSION}/vspackage \
-            | bsdtar -xvf - extension \
-        && mv /var/www/.vscode-server/extensions/extension \
-            /var/www/.vscode-server/extensions/ms-azuretools.vscode-docker-${DOCKER_VERSION}
+RUN mkdir -p /var/www/.vscode-server/extensions
+# intelephense
+RUN cd /var/www/.vscode-server/extensions \
+    && wget -O- https://github.com/bmewburn/vscode-intelephense/releases/download/v${INTELEPHENSE_VERSION}/vscode-intelephense-client-${INTELEPHENSE_VERSION}.vsix \
+        | bsdtar -xvf - extension \
+    && mv /var/www/.vscode-server/extensions/extension \
+        /var/www/.vscode-server/extensions/bmewburn.vscode-intelephense-client-${INTELEPHENSE_VERSION}
+# prettier
+RUN cd /var/www/.vscode-server/extensions \
+    && wget -O- https://github.com/prettier/prettier-vscode/releases/download/v${PRETTIER_VERSION}/prettier-vscode-${PRETTIER_VERSION}.vsix \
+        | bsdtar -xvf - extension \
+    && mv /var/www/.vscode-server/extensions/extension \
+        /var/www/.vscode-server/extensions/esbenp.prettier-vscode-${PRETTIER_VERSION}
+# docker
+RUN cd /var/www/.vscode-server/extensions \
+    && wget -O- https://github.com/microsoft/vscode-docker/releases/download/v${DOCKER_VERSION}/vscode-docker-${DOCKER_VERSION}.vsix \
+        | bsdtar -xvf - extension \
+    && mv /var/www/.vscode-server/extensions/extension \
+        /var/www/.vscode-server/extensions/ms-azuretools.vscode-docker-${DOCKER_VERSION}
 
 # change /var/www ownership
 RUN chown -R www-data:www-data /var/www
