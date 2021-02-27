@@ -81,6 +81,7 @@ services:
       args:
         ALPINE_VERSION: ${ALPINE_VERSION:-3.13.1}
         MUTAGEN_VERSION: ${MUTAGEN_VERSION:-0.11.8}
+    privileged: true
     environment:
       UID: ${UID}
       GID: ${GID}

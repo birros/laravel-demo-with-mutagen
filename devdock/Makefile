@@ -4,8 +4,8 @@ all: vscode
 $(shell test -f .env || cp .env.example .env)
 
 # Populate UID & GID vars
-$(shell sed -i '' 's/UID=.*/UID=$(shell id -u)/g' .env)
-$(shell sed -i '' 's/GID=.*/GID=$(shell id -g)/g' .env)
+$(shell sed -i.bak 's/UID=.*/UID=$(shell id -u)/g' .env && rm .env.bak)
+$(shell sed -i.bak 's/GID=.*/GID=$(shell id -g)/g' .env && rm .env.bak)
 
 # Load dot env
 include .env
@@ -20,7 +20,7 @@ IF_EMPTY_APP_KEY=source .env; test -z \$${APP_KEY}
 IF_NO_DOT_ENV=! test -f .env
 COPY_GITCONFIG=docker cp ${GITCONFIG_PATH} $$(docker-compose ps -q app):/var/www/.gitconfig
 ASK_CONFIRM=printf "Are you sure? [y/N] " && read ans && [ $${ans:-N} == y ]
-PWD_HEX=$(shell printf $$PWD | xxd -pu | tr -d "\n\r")
+PWD_HEX=$(shell printf "$$PWD" | od -A n -t x1 | tr -d "\n\r ")
 WORKSPACE_FOLDER=$(shell grep workspaceFolder .devcontainer.json | sed 's/^ *"workspaceFolder" *: *"\(.*\)".*/\1/')
 DOCKER_VOLUME_RM=VOLUMES=$$(docker run --rm -v $$PWD/docker-compose.yml:/docker-compose.yml:ro mikefarah/yq e '.volumes | keys | join(" ")' /docker-compose.yml) \
 	&& for v in $$VOLUMES; do docker volume rm ${COMPOSE_PROJECT_NAME}_$$v; done
