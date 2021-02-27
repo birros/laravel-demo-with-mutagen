@@ -1,4 +1,4 @@
-all: up
+all: vscode
 
 # Create .env if doesn't exists
 $(shell test -f .env || cp .env.example .env)
@@ -20,8 +20,14 @@ IF_EMPTY_APP_KEY=source .env; test -z \$${APP_KEY}
 IF_NO_DOT_ENV=! test -f .env
 COPY_GITCONFIG=docker cp ${GITCONFIG_PATH} $$(docker-compose ps -q app):/var/www/.gitconfig
 ASK_CONFIRM=printf "Are you sure? [y/N] " && read ans && [ $${ans:-N} == y ]
+PWD_HEX=$(shell printf $$PWD | xxd -pu | tr -d "\n\r")
+WORKSPACE_FOLDER=$(shell grep workspaceFolder .devcontainer.json | sed 's/^ *"workspaceFolder" *: *"\(.*\)".*/\1/')
 DOCKER_VOLUME_RM=VOLUMES=$$(docker run --rm -v $$PWD/docker-compose.yml:/docker-compose.yml:ro mikefarah/yq e '.volumes | keys | join(" ")' /docker-compose.yml) \
 	&& for v in $$VOLUMES; do docker volume rm ${COMPOSE_PROJECT_NAME}_$$v; done
+
+.PHONY: vscode
+vscode:
+	@code --folder-uri "vscode-remote://dev-container+${PWD_HEX}${WORKSPACE_FOLDER}"
 
 .PHONY: docker-build
 docker-build:

@@ -7,10 +7,7 @@
     "settings": {
         "terminal.integrated.shell.linux": "/bin/bash"
     },
-    "initializeCommand": "make",
-    // The following property is not a devcontainer property but is used by
-    // custom docker-compose script to stop mutagen sync
-    "deinitializeCommand": "make stop",
+    "initializeCommand": "make up",
     "shutdownAction": "stopCompose",
     "extensions": [
         "bmewburn.vscode-intelephense-client",
