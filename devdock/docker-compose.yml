@@ -9,6 +9,8 @@ services:
         NGINX_VERSION: ${NGINX_VERSION:-1.19.7}
     volumes:
       - code:/var/www/html:ro
+    depends_on:
+      - mutagen
     networks:
       - reverse-proxy
       - app
@@ -36,6 +38,9 @@ services:
       - code:/var/www/html
       - composer:/var/www/.composer
       - npm:/var/www/.npm
+    depends_on:
+      - mutagen
+      - db
     networks:
       - app
       - db
@@ -56,6 +61,8 @@ services:
     build:
       context: ./adminer
       dockerfile: Dockerfile
+    depends_on:
+      - db
     networks:
       - reverse-proxy
       - db
@@ -68,11 +75,18 @@ services:
       - "traefik.http.routers.${COMPOSE_PROJECT_NAME}_db.rule=Host(`${ADMINER_HOST}`)"
 
   mutagen:
-    image: alpine:${ALPINE_VERSION:-3.13.1}
-    container_name: ${COMPOSE_PROJECT_NAME}_mutagen
+    build:
+      context: ./mutagen
+      dockerfile: Dockerfile
+      args:
+        ALPINE_VERSION: ${ALPINE_VERSION:-3.13.1}
+        MUTAGEN_VERSION: ${MUTAGEN_VERSION:-0.11.8}
+    environment:
+      UID: ${UID}
+      GID: ${GID}
     volumes:
-      - code:/var/www/html
-    command: tail -f /dev/null
+      - ${REPO_PATH}:/alpha
+      - code:/beta
 
 networks:
   reverse-proxy:

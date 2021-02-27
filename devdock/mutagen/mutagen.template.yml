@@ -1,12 +1,16 @@
 sync:
-  ${COMPOSE_PROJECT_NAME}-code:
-    alpha: ${REPO_PATH}
-    beta: "docker://${COMPOSE_PROJECT_NAME}_mutagen/var/www/html"
+  code:
+    alpha: "/alpha"
+    beta: "/beta"
     mode: "two-way-resolved"
     ignore:
       paths:
         - "/vendor"
         - "/node_modules"
+    configurationAlpha:
+      permissions:
+        defaultOwner: "id:${UID}" # user
+        defaultGroup: "id:${GID}" # user
     configurationBeta:
       permissions:
         defaultOwner: "id:33" # www-data

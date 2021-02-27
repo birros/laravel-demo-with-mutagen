@@ -1,7 +1,13 @@
 all: up
 
-# Create .env if doesn't exists & load it
+# Create .env if doesn't exists
 $(shell test -f .env || cp .env.example .env)
+
+# Populate UID & GID vars
+$(shell sed -i '' 's/UID=.*/UID=$(shell id -u)/g' .env)
+$(shell sed -i '' 's/GID=.*/GID=$(shell id -g)/g' .env)
+
+# Load dot env
 include .env
 
 # Constants
@@ -13,7 +19,6 @@ SH_WWW= docker-compose exec -u 33:33 app bash
 IF_EMPTY_APP_KEY=source .env; test -z \$${APP_KEY}
 IF_NO_DOT_ENV=! test -f .env
 COPY_GITCONFIG=docker cp ${GITCONFIG_PATH} $$(docker-compose ps -q app):/var/www/.gitconfig
-GENERATE_MUTAGEN=set -a; source $$PWD/.env; envsubst < mutagen.template.yml > mutagen.yml
 ASK_CONFIRM=printf "Are you sure? [y/N] " && read ans && [ $${ans:-N} == y ]
 DOCKER_VOLUME_RM=VOLUMES=$$(docker run --rm -v $$PWD/docker-compose.yml:/docker-compose.yml:ro mikefarah/yq e '.volumes | keys | join(" ")' /docker-compose.yml) \
 	&& for v in $$VOLUMES; do docker volume rm ${COMPOSE_PROJECT_NAME}_$$v; done
@@ -29,13 +34,8 @@ docker-up: docker-build
 	@${SH_ROOT} -c "chown -R www-data:www-data /var/www/.npm"
 	@${COPY_GITCONFIG}
 
-.PHONY: mutagen-up
-mutagen-up: docker-up
-	@${GENERATE_MUTAGEN}
-	mutagen project start || exit 0
-
 .PHONY: up
-up: mutagen-up
+up: docker-up
 	@${SH_WWW} -c "${IF_NO_DOT_ENV}    && sed -e 's/DB_HOST=.*/DB_HOST=db/g' .env.example > .env" || exit 0
 	@${SH_WWW} -c "${IF_EMPTY_APP_KEY} && composer install"                                       || exit 0
 	@${SH_WWW} -c "${IF_EMPTY_APP_KEY} && npm install && npm run dev"                             || exit 0
@@ -45,19 +45,15 @@ up: mutagen-up
 restart:
 	docker-compose restart
 
-.PHONY: mutagen-down
-mutagen-down:
-	mutagen project terminate || exit 0
-
 .PHONY: docker-stop
-docker-stop: mutagen-down
+docker-stop:
 	docker-compose stop
 
 .PHONY: stop
 stop: docker-stop
 
 .PHONY: docker-down
-docker-down: mutagen-down
+docker-down:
 	docker-compose down
 
 .PHONY: docker-volume-rm

@@ -16,24 +16,14 @@ This folder aims to show how to use [docker][1] with [mutagen][2].
 
 ## Install dependencies
 
-1. Clone and run the following reverse-proxy setup to expose project locally:
-   [docker-traefik-mkcert][3]
-2. Install mutagen
-    ```shell
-    $ brew install mutagen-io/mutagen/mutagen
-    ```
-
-## Optionnal dependency
-
-To force vscode to run `make stop` when stopping `docker-compose` stack we use
-this wrapper: [vscode-deinitialize-command][6]
+Clone and run the following reverse-proxy setup to expose project locally:
+[docker-traefik-mkcert][3]
 
 ## Setup
 
 ```shell
 $ make      # start
 $ make down # stop
-$ mutagen daemon stop
 ```
 
 Project available here: https://laravel-demo.dev.localhost
