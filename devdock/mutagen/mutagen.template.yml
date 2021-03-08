@@ -7,6 +7,7 @@ sync:
       paths:
         - "/vendor"
         - "/node_modules"
+        - "/devdock/dumps"
     configurationAlpha:
       permissions:
         defaultOwner: "id:${UID}" # user

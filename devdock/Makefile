@@ -3,9 +3,10 @@ all: vscode
 # Create .env if doesn't exists
 $(shell test -f .env || cp .env.example .env)
 
-# Populate UID & GID vars
+# Populate UID, GID & TZ vars
 $(shell sed -i.bak 's/UID=.*/UID=$(shell id -u)/g' .env && rm .env.bak)
 $(shell sed -i.bak 's/GID=.*/GID=$(shell id -g)/g' .env && rm .env.bak)
+$(shell sed -i.bak 's%TZ=.*%TZ=$(shell ls -la /etc/localtime | sed -e "s/.*\/\(.*\/.*\)$$/\1/g")%g' .env && rm .env.bak)
 
 # Load dot env
 include .env
@@ -42,10 +43,10 @@ docker-up: docker-build
 
 .PHONY: up
 up: docker-up
-	@${SH_WWW} -c "${IF_NO_DOT_ENV}    && sed -e 's/DB_HOST=.*/DB_HOST=db/g' .env.example > .env" || exit 0
-	@${SH_WWW} -c "${IF_EMPTY_APP_KEY} && composer install"                                       || exit 0
-	@${SH_WWW} -c "${IF_EMPTY_APP_KEY} && npm install && npm run dev"                             || exit 0
-	@${SH_WWW} -c "${IF_EMPTY_APP_KEY} && php artisan key:generate"                               || exit 0
+	@${SH_WWW} -c "${IF_NO_DOT_ENV}    && sed -e 's/DB_HOST=.*/DB_HOST=db/g' .env.example > .env || exit 0"
+	@${SH_WWW} -c "${IF_EMPTY_APP_KEY} && composer install                                       || exit 0"
+	@${SH_WWW} -c "${IF_EMPTY_APP_KEY} && npm install && npm run dev                             || exit 0"
+	@${SH_WWW} -c "${IF_EMPTY_APP_KEY} && php artisan key:generate                               || exit 0"
 
 .PHONY: restart
 restart:
